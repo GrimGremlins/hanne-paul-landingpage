@@ -1,0 +1,632 @@
+/* Hallmark · macrostructure: Long Document (editorial, asymmetric, single-column) — rebuilt per client feedback
+ * theme: custom "quiet luxury editorial" · paper: #F6F2EA · accent: #2E362B (forest) · highlight: #AD8B57 (brass, sparing)
+ * display: Fraunces · body: Switzer/Inter · liquid glass: nav + CTA + contact card ONLY, tiered by viewport
+ * motion: ONE pattern — opacity+translateY reveal on first view, magnetic hover on desktop pointer:fine only
+ * REBUILD NOTE: previous draft (aurora mesh, glass service-cards, wave dividers, stagger-everything)
+ * was rejected by the client as "too AI / doesn't fit a discreet advisory brand" — removed entirely.
+ */
+
+@import url("tokens.css");
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; }
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+  position: relative;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-style: normal;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  /* `overflow-wrap: anywhere` (the previous value) breaks a word at ANY
+     character the moment it helps the line fit — on long German compounds
+     (Unternehmensberatung, Handelsimmobilien) at display sizes on a phone
+     that reliably strands the last letter or two alone on the next line.
+     `break-word` only breaks a word as a last resort when it can't fit a
+     line by itself, and `hyphens: auto` (with lang="de" on <html>) lets the
+     browser insert a real hyphen at a syllable boundary instead of an
+     arbitrary cut when it does have to break one. */
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  min-width: 0;
+}
+
+p { margin: 0; }
+::selection { background: var(--color-forest); color: var(--color-paper); }
+
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ————————————————————— Film grain (Tier A, cheap, no canvas) ————————————————————— */
+
+/* Grain kept coarse + low-opacity + a gentle blend on purpose: a fine/high-frequency
+   turbulence pattern combined with `overlay` blending aliases visibly against
+   anti-aliased serif glyph edges ("pixelated letters") — soft-light + low opacity
+   avoids that while still reading as tactile grain on flat colour areas. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-toast);
+  pointer-events: none;
+  opacity: 0.02;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+@media (max-width: 40rem) {
+  body::after { opacity: 0.014; }
+}
+
+/* ————————————————————— Liquid glass (nav / CTA / contact card only) ————————————————————— */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+/* BUGFIX: the refraction must warp only what's BEHIND the glass (the blurred
+   backdrop), never the element's own border/text — that was applied via the
+   `filter` property before, which distorts the element's own rendering
+   (text glyphs, border) and produced the "torn paper" wobbly border and
+   illegible "handwritten" text the client flagged. `backdrop-filter` accepts
+   the same filter-function list and only touches the backdrop layer. */
+:root[data-glass-tier="desktop"] .glass--refract {
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%) url(#liquid-glass-refraction);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+}
+
+/* Chromium-based mobile/tablet browsers (Android Chrome, a narrow desktop
+   Chrome window) DO support the SVG reference — give them a smaller, static
+   (non-animated, no JS interval) warp so the motif isn't Chrome-desktop-only.
+   Safari — on iOS this means every browser, since all iOS browsers are
+   WebKit under the hood — never receives a url() filter here on purpose:
+   see the PLATFORM LIMIT note below for why, and what mobile gets instead. */
+:root[data-glass-tier="tablet"] .glass--refract,
+:root[data-glass-tier="mobile"] .glass--refract {
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%) url(#liquid-glass-refraction-light);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+}
+
+/* PLATFORM LIMIT — not a bug, verified against WebKit's shipped feature set:
+   Safari's backdrop-filter has never supported a url(#svg-filter) reference,
+   on macOS or iOS, in any browser (iOS forces WebKit under every browser
+   name, including "Chrome" for iOS). The `-webkit-backdrop-filter` lines
+   above deliberately omit url(...) and fall back to plain blur — that's
+   correct, not an oversight. Without this, the site's one signature visual
+   motif would be fully invisible on an iPhone, in every browser, at every
+   viewport width — which is exactly what was reported. Fix: a pure-CSS
+   gradient sheen that needs no filter support at all, so it renders
+   identically everywhere (Safari included) — the glass elements' actual
+   "alive" motif from here on, with the SVG warp as a Chromium-only bonus. */
+.glass--refract {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.glass--refract::before {
+  content: "";
+  position: absolute;
+  inset: -60% -10%;
+  background: linear-gradient(75deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.4) 49%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.4) 51%,
+    transparent 58%);
+  mix-blend-mode: soft-light;
+  transform: translateX(-45%);
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .glass--refract::before {
+    animation: glass-sheen 10s ease-in-out infinite;
+  }
+}
+@keyframes glass-sheen {
+  0%, 100% { transform: translateX(-45%); }
+  50%      { transform: translateX(45%); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass { box-shadow: none; }
+}
+
+/* ————————————————————— Nav ————————————————————— */
+
+.nav-edge {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) var(--page-gutter) 0;
+  padding: var(--space-sm) var(--space-lg);
+  padding-top: calc(var(--space-sm) + env(safe-area-inset-top, 0px));
+  border-radius: var(--radius-md);
+  transition: background-color var(--dur-long) var(--ease-out);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  min-width: 0;
+}
+
+.wordmark small {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-top: var(--space-3xs);
+}
+
+.cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-sm) var(--space-lg);
+  min-height: 44px;
+  border: 1.5px solid var(--color-forest);
+  border-radius: var(--radius-md);
+  color: var(--color-forest);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+}
+.cta-outline:hover { background: var(--color-forest); color: var(--color-paper); }
+
+/* Nav CTA carries two labels; CSS picks one so the button never has to be
+   wider than the short form on narrow screens (see .nav-edge fix below). */
+.cta-outline__short { display: none; }
+
+.cta-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-md) var(--space-xl);
+  min-height: 44px;
+  background: var(--color-forest);
+  color: var(--color-paper);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* magnetic hover — desktop, fine pointer only, JS adds .is-magnetic and inline transform */
+@media (hover: hover) and (pointer: fine) {
+  .magnetic { transition: transform 200ms var(--ease-out); }
+}
+
+/* ————————————————————— Eyebrow ————————————————————— */
+
+.eyebrow {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-brass);
+  margin-bottom: var(--space-sm);
+}
+
+/* ————————————————————— GEO answer block ————————————————————— */
+
+.answer-block {
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+  max-width: 62ch;
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-rule);
+  margin-block: var(--space-lg);
+}
+
+/* ————————————————————— Hero ————————————————————— */
+
+.hero {
+  padding: var(--space-3xl) var(--page-gutter) var(--space-2xl);
+  max-width: 74rem;
+  margin-inline: auto;
+}
+
+.hero__eyebrow { margin-bottom: var(--space-lg); }
+
+.hero h1 {
+  font-size: var(--text-display);
+  max-width: 20ch;
+}
+
+.hero__lede {
+  margin-top: var(--space-xl);
+  max-width: 52ch;
+  font-size: var(--text-lg);
+  color: var(--color-ink-2);
+}
+
+.hero__lede + .hero__lede { margin-top: var(--space-md); }
+
+.hero__cta {
+  margin-top: var(--space-xl);
+}
+
+/* ————————————————————— Social proof — concrete numbers, no card chrome ————————————————————— */
+
+.proof {
+  padding: 0 var(--page-gutter) var(--space-2xl);
+  max-width: 74rem;
+  margin-inline: auto;
+}
+
+.proof__list {
+  margin: 0;
+  padding-top: var(--space-lg);
+  border-top: var(--rule-hairline) solid var(--color-rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl) var(--space-2xl);
+}
+
+.proof__item {
+  min-width: 12rem;
+  flex: 1 1 12rem;
+}
+
+.proof__number {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-forest);
+}
+
+.proof__label {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  max-width: 26ch;
+}
+
+/* ————————————————————— Leistungen — long-form editorial blocks, alternating alignment ————————————————————— */
+
+.leistungen {
+  padding: var(--space-3xl) var(--page-gutter);
+  max-width: 68rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+  border-top: var(--rule-hairline) solid var(--color-rule);
+}
+
+.leistungen__intro {
+  max-width: 52ch;
+  font-size: var(--text-lg);
+  color: var(--color-ink-2);
+}
+
+.leistung {
+  max-width: 58ch;
+  position: relative;
+}
+
+.leistung--right { margin-inline-start: auto; text-align: right; }
+.leistung--right .answer-block { margin-inline-start: auto; border-left: none; border-right: 2px solid var(--color-rule); padding-left: 0; padding-right: var(--space-md); }
+
+/* Numbering here mirrors the "So arbeite ich" process numerals: a standalone
+   brass digit beside the label, not a "N — Label" dash string — justified
+   because the three services really are an ordered sequence. */
+.leistungen { counter-reset: leistung-step; }
+.leistung--step { counter-increment: leistung-step; }
+.leistung--step .eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+.leistung--right.leistung--step .eyebrow { flex-direction: row-reverse; justify-content: flex-end; }
+.leistung--step .eyebrow::before {
+  content: counter(leistung-step, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-brass);
+}
+
+.leistung__title { font-size: var(--text-2xl); margin-bottom: var(--space-md); }
+.leistung__body { color: var(--color-ink-2); }
+.leistung__body + .leistung__body { margin-top: var(--space-sm); }
+.leistung__note { font-size: var(--text-sm); color: var(--color-muted); margin-top: var(--space-sm); }
+
+/* ————————————————————— Mission — pinned side-quote —————————————————————
+   Default state (no JS / reduced motion / no GSAP): a plain, centered, fully
+   visible static quote — see the base rules below. main.js opts INTO the
+   pinned, asymmetric, word-by-word scroll reveal on desktop when motion is
+   allowed (adds .mission--pinned and repositions via the rules further down). */
+
+.mission {
+  background: var(--color-paper-dark);
+  color: var(--color-paper);
+  padding: var(--space-3xl) var(--page-gutter);
+  text-align: center;
+}
+
+.mission__eyebrow { display: block; text-align: center; }
+
+.mission__quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-2xl);
+  max-width: 30ch;
+  margin-inline: auto;
+  line-height: 1.3;
+}
+
+.mission__quote .word { opacity: 1; }
+
+/* Enhanced, JS-driven state: side-inset, pinned while scrolling, words light up
+   in sequence. Only ever applied on desktop + motion-allowed (see main.js). */
+.mission--pinned {
+  min-height: 220vh;
+  text-align: left;
+  padding-block: 0;
+}
+
+.mission--pinned .mission__pin {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-2xl) var(--page-gutter);
+}
+
+.mission--pinned .mission__eyebrow { text-align: left; margin-bottom: var(--space-lg); }
+
+.mission--pinned .mission__quote {
+  margin-inline: 0 0 0 auto;
+  margin-inline-start: auto;
+  text-align: right;
+  max-width: 34ch;
+  border-right: 2px solid var(--color-brass);
+  padding-right: var(--space-lg);
+}
+
+.mission--pinned .mission__quote .word { opacity: 0.28; transition: opacity 60ms linear; }
+
+/* ————————————————————— So arbeiten wir — process ————————————————————— */
+
+.prozess {
+  padding: var(--space-3xl) var(--page-gutter);
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.prozess__list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-xl) 0 0;
+  counter-reset: step;
+}
+
+.prozess__list li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--space-lg);
+  padding-block: var(--space-lg);
+  border-top: var(--rule-hairline) solid var(--color-rule);
+}
+
+.prozess__list li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  color: var(--color-brass);
+}
+
+.prozess__step-title { font-family: var(--font-display); font-size: var(--text-md); margin-bottom: var(--space-2xs); }
+.prozess__step-body { color: var(--color-ink-2); font-size: var(--text-sm); max-width: 56ch; }
+
+/* ————————————————————— Einwandbehandlung ————————————————————— */
+
+.einwand {
+  padding: var(--space-3xl) var(--page-gutter);
+  max-width: 56rem;
+  margin-inline: auto;
+  border-top: var(--rule-hairline) solid var(--color-rule);
+}
+
+.einwand__body {
+  max-width: 62ch;
+  color: var(--color-ink-2);
+  font-size: var(--text-md);
+  margin-top: var(--space-lg);
+}
+.einwand__body + .einwand__body { margin-top: var(--space-md); }
+
+/* ————————————————————— FAQ — native details/summary, no JS required ————————————————————— */
+
+.faq {
+  padding: var(--space-3xl) var(--page-gutter);
+  max-width: 56rem;
+  margin-inline: auto;
+  border-top: var(--rule-hairline) solid var(--color-rule);
+}
+
+.faq__item {
+  border-bottom: var(--rule-hairline) solid var(--color-rule);
+}
+
+.faq__item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  cursor: pointer;
+  list-style: none;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+
+.faq__item summary::after {
+  content: "+";
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  color: var(--color-brass);
+  flex-shrink: 0;
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.faq__item[open] summary::after { transform: rotate(45deg); }
+
+.faq__answer { padding-bottom: var(--space-lg); color: var(--color-ink-2); max-width: 62ch; }
+
+/* ————————————————————— Kontakt ————————————————————— */
+
+.kontakt {
+  padding: var(--space-3xl) var(--page-gutter) var(--space-4xl);
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.kontakt__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+.kontakt__title { font-size: var(--text-2xl); margin-bottom: var(--space-md); }
+.kontakt__body { color: var(--color-ink-2); max-width: 48ch; margin-bottom: var(--space-lg); }
+
+.kontakt__card {
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
+}
+
+.kontakt__card address {
+  font-style: normal;
+  font-size: var(--text-sm);
+  color: var(--color-ink-2);
+  line-height: 1.8;
+  margin-top: var(--space-lg);
+}
+
+/* ————————————————————— Footer ————————————————————— */
+
+.foot-letter {
+  padding: var(--space-2xl) var(--page-gutter) calc(var(--space-2xl) + env(safe-area-inset-bottom, 0px));
+  max-width: 60ch;
+  margin-inline: auto;
+  border-top: var(--rule-hairline) solid var(--color-rule);
+}
+
+.foot-letter__close { font-family: var(--font-display); font-size: var(--text-lg); line-height: 1.4; }
+.foot-letter__sign { font-weight: 600; }
+.foot-letter__ps { font-size: var(--text-sm); color: var(--color-muted); margin-top: var(--space-md); }
+
+.foot-letter__nav {
+  margin-top: var(--space-xl);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-lg);
+  font-size: var(--text-sm);
+}
+.foot-letter__nav a {
+  color: var(--color-muted);
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.foot-letter__nav a:hover { color: var(--color-ink); border-color: var(--color-rule); }
+
+/* ————————————————————— Legal pages — plain, no glass, no ornament ————————————————————— */
+
+.legal { padding: var(--space-3xl) var(--page-gutter) var(--space-4xl); max-width: 68ch; margin-inline: auto; }
+.legal h1 { font-size: var(--text-2xl); margin-bottom: var(--space-lg); }
+.legal h2 { font-size: var(--text-lg); margin-top: var(--space-2xl); margin-bottom: var(--space-sm); }
+.legal p, .legal li { color: var(--color-ink-2); max-width: 68ch; }
+.legal p { margin-bottom: var(--space-md); }
+.legal a { border-bottom: 1px solid var(--color-rule); }
+.legal a:hover { border-color: var(--color-forest); color: var(--color-forest); }
+.legal .back-link { display: inline-block; margin-bottom: var(--space-xl); font-size: var(--text-sm); color: var(--color-muted); }
+
+/* ————————————————————— Reveal — ONE motion pattern, applied per element ————————————————————— */
+
+.reveal { opacity: 0; transform: translateY(20px); }
+.reveal.is-inview { animation: reveal var(--dur-long) var(--ease-out) forwards; }
+@keyframes reveal { to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; animation: none; }
+}
+
+/* ————————————————————— Responsive ————————————————————— */
+
+@media (max-width: 60rem) {
+  .kontakt__grid { grid-template-columns: 1fr; }
+  .leistung--right { margin-inline-start: 0; text-align: left; }
+  .leistung--right .answer-block { margin-inline-start: 0; border-right: none; border-left: 2px solid var(--color-rule); padding-right: 0; padding-left: var(--space-md); }
+  /* The step numeral must flip back to a plain left-to-right row here too —
+     otherwise the "02 Vermittlung" eyebrow stays right-aligned/reversed while
+     everything below it (heading, body) switches to left-aligned, so the
+     number reads as detached from its own heading on narrow screens. */
+  .leistung--right.leistung--step .eyebrow { flex-direction: row; justify-content: flex-start; }
+}
+
+@media (max-width: 40rem) {
+  .nav-edge { margin: var(--space-sm) var(--page-gutter) 0; padding: var(--space-sm) var(--space-md); padding-top: calc(var(--space-sm) + env(safe-area-inset-top, 0px)); }
+  .hero { padding-top: var(--space-2xl); }
+  .mission__quote { font-size: var(--text-xl); }
+  .prozess__list li { grid-template-columns: 2.5rem 1fr; }
+}
+
+/* Nav overflow fix: below ~400px the wordmark ("Hanne Paul" + tracked-out
+   subtitle) and the outlined CTA no longer both fit at full size — the CTA,
+   set to white-space:nowrap so its label never breaks mid-word, pushed past
+   the glass pill's own rounded edge ("boxes overstepping their border" on
+   iPhone-width screens). Fix at the source: shrink the CTA and drop the
+   wordmark subtitle rather than letting anything wrap or overflow. */
+@media (max-width: 26rem) {
+  .cta-outline { padding: var(--space-xs) var(--space-md); font-size: var(--text-xs); }
+  .cta-outline__full { display: none; }
+  .cta-outline__short { display: inline; }
+  .wordmark small { display: none; }
+}

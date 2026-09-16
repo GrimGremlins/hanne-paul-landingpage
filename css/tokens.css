@@ -1,0 +1,94 @@
+/* Hallmark tokens · theme: custom (client-specified) · vibe: "quiet luxury editorial, discreet, established"
+ * paper: #F6F2EA · accent: #2E362B (forest) · highlight: #AD8B57 (brass, sparing)
+ * display: Fraunces · body: Switzer (Inter fallback)
+ */
+
+:root {
+  /* — Colour — client-specified, muted/earthy, no bright gradients — */
+  --color-paper:     #F6F2EA;
+  --color-paper-2:   #EFE9DC;
+  --color-paper-dark:#14161A;
+  --color-ink:       #1F2320;
+  --color-ink-2:     #4A4F49;
+  --color-forest:    #2E362B;
+  --color-brass:     #AD8B57;
+  --color-rule:      rgba(31, 35, 32, 0.12);
+  --color-rule-2:    rgba(31, 35, 32, 0.07);
+  --color-muted:     #6B6F67;
+
+  --color-accent:      var(--color-forest);
+  --color-accent-ink:  var(--color-paper);
+  --color-focus:       var(--color-brass);
+
+  /* — Type — */
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body:    "Switzer", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.9375rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5rem;
+  --text-xl:   clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  --text-2xl:  clamp(2.25rem, 1.7rem + 2.5vw, 3.5rem);
+  --text-display: clamp(2.75rem, 1.9rem + 4.2vw, 5.75rem);
+
+  /* — Space (4pt scale) — */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --page-gutter: clamp(1.25rem, 5vw, 5rem);
+
+  /* — Motion — */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  480ms;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --rule-hairline: 1px;
+
+  --z-base:     1;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-tooltip:  600;
+
+  /* — Liquid glass tiers (set by main.js via matchMedia; CSS reads these) —
+     Intensified per client feedback ("härter"): reference implementations
+     (lucasromerodb/liquid-glass-effect-macos) use feDisplacementMap scale
+     ~40 for a genuinely visible warp; scale=6 (previous value) read as a
+     plain blur. Mobile stays lighter (no SVG filter at all — see style.css). */
+  --glass-blur: 16px;
+  --glass-bg: color-mix(in srgb, var(--color-paper) 68%, transparent);
+  --glass-border: rgba(31, 35, 32, 0.16);
+}
+
+:root[data-glass-tier="tablet"] {
+  --glass-blur: 24px;
+}
+
+:root[data-glass-tier="desktop"] {
+  --glass-blur: 32px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: var(--color-paper);
+    --glass-blur: 0px;
+  }
+}
