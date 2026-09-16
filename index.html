@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add('js');</script>
+<noscript><style>.reveal, .reveal-split { opacity: 1 !important; transform: none !important; } .reveal-split .split-inner { transform: none !important; opacity: 1 !important; }</style></noscript>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Unternehmensberatung Hanne Paul — Gewerbe- &amp; Handelsimmobilien</title>
 <meta name="description" content="Unternehmensberatung Hanne Paul begleitet Unternehmen und Eigentümer bei Beratung, Vermittlung und Projektentwicklung von Gewerbe- und Handelsimmobilien. In der Brauturm Galerie, Illingen.">
@@ -117,13 +119,26 @@
 <main id="hauptinhalt">
 
   <section class="hero">
-    <span class="eyebrow reveal">Gewerbe- &amp; Handelsimmobilien</span>
-    <h1 class="reveal">Unternehmensberatung<br>Hanne Paul</h1>
-    <p class="answer-block reveal">Ich begleite Unternehmen und Eigentümer bei Beratung, Vermittlung und Projektentwicklung von Gewerbe- und Handelsimmobilien — mit Sitz in der Brauturm Galerie, Illingen.</p>
-    <div class="hero__lede reveal">
-      <p>Ich berate Unternehmen und Eigentümer bei Gewerbe- und Handelsimmobilien: mit Marktkenntnis, strategischem Denken und einem Netzwerk, das über Jahre gewachsen ist — von der ersten Idee bis zur erfolgreichen Umsetzung.</p>
+    <div class="hero__aurora" aria-hidden="true">
+      <div class="aurora__glow aurora__glow--1"></div>
+      <div class="aurora__glow aurora__glow--2"></div>
+      <div class="aurora__glow aurora__glow--3"></div>
     </div>
-    <a class="cta-solid hero__cta magnetic reveal" href="#kontakt">Erstgespräch anfragen →</a>
+    <div class="hero__content">
+      <span class="eyebrow reveal">Gewerbe- &amp; Handelsimmobilien</span>
+      <h1 class="hero__headline reveal-split" data-split-headline>
+        <span class="split-line"><span class="split-inner">Unternehmensberatung</span></span>
+        <span class="split-line"><span class="split-inner">Hanne Paul</span></span>
+      </h1>
+      <p class="answer-block reveal">Ich begleite Unternehmen und Eigentümer bei Beratung, Vermittlung und Projektentwicklung von Gewerbe- und Handelsimmobilien — mit Sitz in der Brauturm Galerie, Illingen.</p>
+      <div class="hero__lede reveal">
+        <p>Ich berate Unternehmen und Eigentümer bei Gewerbe- und Handelsimmobilien: mit Marktkenntnis, strategischem Denken und einem Netzwerk, das über Jahre gewachsen ist — von der ersten Idee bis zur erfolgreichen Umsetzung.</p>
+      </div>
+      <a class="cta-solid hero__cta magnetic reveal" href="#kontakt">
+        <span>Erstgespräch anfragen</span>
+        <span class="cta__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </section>
 
   <!-- DRAFT — Social-Proof-Zahlen: Struktur steht, Werte sind Platzhalter.
@@ -133,15 +148,18 @@
   <section class="proof reveal" aria-labelledby="proof-titel">
     <h2 id="proof-titel" class="visually-hidden">Erfahrung in Zahlen</h2>
     <dl class="proof__list">
-      <div class="proof__item">
+      <div class="proof__item tilt-card" data-tilt>
+        <div class="proof__card-glow" aria-hidden="true"></div>
         <dt class="proof__number">[X] Jahre</dt>
         <dd class="proof__label">Erfahrung mit Gewerbe- und Handelsimmobilien</dd>
       </div>
-      <div class="proof__item">
+      <div class="proof__item tilt-card" data-tilt>
+        <div class="proof__card-glow" aria-hidden="true"></div>
         <dt class="proof__number">[X]</dt>
         <dd class="proof__label">begleitete Vermittlungen und Projekte</dd>
       </div>
-      <div class="proof__item">
+      <div class="proof__item tilt-card" data-tilt>
+        <div class="proof__card-glow" aria-hidden="true"></div>
         <dt class="proof__number">[Name/Referenz]</dt>
         <dd class="proof__label">Zusammenarbeit auf Anfrage nennbar</dd>
       </div>
@@ -183,24 +201,29 @@
 
   <!-- DRAFT — Prozess-Abschnitt: redaktionell formuliert auf Basis der bestehenden Texte,
        kein Original-Content von der Quellseite. Bitte vor Veröffentlichung bestätigen. -->
+  <!-- DRAFT — Prozess-Abschnitt: redaktionell formuliert auf Basis der bestehenden Texte,
+       kein Original-Content von der Quellseite. Bitte vor Veröffentlichung bestätigen. -->
   <section class="prozess" aria-labelledby="prozess-titel">
     <span class="eyebrow reveal">So arbeite ich</span>
     <h2 id="prozess-titel" class="reveal" style="font-size:var(--text-2xl)">Drei Schritte zur Umsetzung</h2>
     <ol class="prozess__list">
-      <li class="reveal">
-        <div>
+      <li class="prozess__card reveal" style="--card-index: 0;">
+        <span class="prozess__number" aria-hidden="true">01</span>
+        <div class="prozess__card-content">
           <p class="prozess__step-title">Erstgespräch</p>
           <p class="prozess__step-body">Ich höre zu, bevor ich berate: Ausgangslage, Ziele und Rahmenbedingungen Ihres Vorhabens.</p>
         </div>
       </li>
-      <li class="reveal">
-        <div>
+      <li class="prozess__card reveal" style="--card-index: 1;">
+        <span class="prozess__number" aria-hidden="true">02</span>
+        <div class="prozess__card-content">
           <p class="prozess__step-title">Analyse &amp; Strategie</p>
           <p class="prozess__step-body">Marktkenntnis und strategisches Denken werden zu einer konkreten, wirtschaftlich tragfähigen Empfehlung.</p>
         </div>
       </li>
-      <li class="reveal">
-        <div>
+      <li class="prozess__card reveal" style="--card-index: 2;">
+        <span class="prozess__number" aria-hidden="true">03</span>
+        <div class="prozess__card-content">
           <p class="prozess__step-title">Umsetzung &amp; Begleitung</p>
           <p class="prozess__step-body">Von der Vermittlung bis zur Projektentwicklung begleite ich Sie bis zum erfolgreichen Abschluss.</p>
         </div>
@@ -257,7 +280,7 @@
       <div class="reveal">
         <h2 class="kontakt__title">Sprechen wir über Ihr Vorhaben.</h2>
         <p class="kontakt__body">Ob Beratung, Vermittlung oder Projektentwicklung — schreiben Sie mir, und ich melde mich persönlich zurück.</p>
-        <a class="cta-solid magnetic" href="mailto:info@hanne-paul.de">info@hanne-paul.de →</a>
+        <a class="cta-solid magnetic" href="mailto:info@hanne-paul.de"><span>info@hanne-paul.de</span> <span class="cta__arrow" aria-hidden="true">→</span></a>
       </div>
       <div class="kontakt__card glass glass--refract reveal">
         <p class="eyebrow" style="margin-bottom:var(--space-sm)">Adresse</p>

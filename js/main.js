@@ -145,4 +145,67 @@
     // then just got moved/restyled — recompute all trigger positions.
     ScrollTrigger.refresh();
   }
+
+  // — Split-Text animation on Hero headline —
+  const splitHeadlines = document.querySelectorAll("[data-split-headline]");
+  if (splitHeadlines.length > 0) {
+    splitHeadlines.forEach((headline) => {
+      const inners = headline.querySelectorAll(".split-inner");
+      if (reduceMotion || !window.gsap) {
+        headline.classList.add("is-inview");
+      } else {
+        gsap.fromTo(
+          inners,
+          { opacity: 0, y: "115%" },
+          {
+            opacity: 1,
+            y: "0%",
+            duration: 1.05,
+            stagger: 0.14,
+            ease: "power3.out",
+            delay: 0.12,
+            onComplete: () => headline.classList.add("is-inview"),
+          }
+        );
+      }
+    });
+  }
+
+  // — 3D Card Tilt + Hover Glow Reveal for Social Proof Cards —
+  if (fineHover && !reduceMotion) {
+    const tiltCards = document.querySelectorAll("[data-tilt]");
+    tiltCards.forEach((card) => {
+      let rect = null;
+      let rafId = null;
+
+      const updateTransform = (x, y) => {
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
+
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+        card.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-3px)`;
+      };
+
+      card.addEventListener("mouseenter", () => {
+        rect = card.getBoundingClientRect();
+      });
+
+      card.addEventListener("mousemove", (e) => {
+        if (!rect) rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => updateTransform(x, y));
+      });
+
+      card.addEventListener("mouseleave", () => {
+        rect = null;
+        if (rafId) cancelAnimationFrame(rafId);
+        card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)";
+      });
+    });
+  }
 })();
