@@ -208,4 +208,72 @@
       });
     });
   }
+  // — Design-Update 29.09.2026 (design-xray typetypehype.de): Parallax (Baustein 11), Text-Mask-Reveal (24),
+  //   handgezeichnete Linie (32), Scroll-Fortschritt. Alles JS-erzeugt und nur bei erlaubter Bewegung;
+  //   ohne JS/GSAP oder bei reduced-motion bleibt die Seite unverändert vollständig lesbar. —
+  if (!reduceMotion && window.gsap && window.ScrollTrigger) {
+    const easeOut = "expo.out";
+    const small = window.innerWidth <= 1024;
+
+    // Parallax: Aurora läuft mit halber Scroll-Rate (Rate 2, Drift max ~167px), mobil reduziert.
+    const hero = document.querySelector(".hero");
+    const aurora = document.querySelector(".hero__aurora");
+    if (hero && aurora) {
+      gsap.to(aurora, {
+        y: small ? 70 : 167,
+        ease: "none",
+        scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true },
+      });
+      const heroContent = hero.querySelector(".hero__content");
+      if (heroContent && !small) {
+        gsap.to(heroContent, {
+          y: -40,
+          opacity: 0.35,
+          ease: "none",
+          scrollTrigger: { trigger: hero, start: "40% top", end: "bottom top", scrub: true },
+        });
+      }
+    }
+
+    // Text-Mask-Reveal + handgezeichnete Linie unter ausgewählten Überschriften.
+    document.querySelectorAll("[data-mask]").forEach((h) => {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("class", "hand-line");
+      svg.setAttribute("viewBox", "0 0 260 10");
+      svg.setAttribute("preserveAspectRatio", "none");
+      svg.setAttribute("aria-hidden", "true");
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", "M2 6 C 38 1, 82 9, 130 4.5 S 214 8, 258 3");
+      path.setAttribute("pathLength", "1");
+      path.style.strokeDasharray = "1";
+      path.style.strokeDashoffset = "1";
+      svg.appendChild(path);
+      h.insertAdjacentElement("afterend", svg);
+
+      gsap.set(h, { clipPath: "inset(0 0 100% 0)", y: 28 });
+      ScrollTrigger.create({
+        trigger: h,
+        start: "top 88%",
+        once: true,
+        onEnter: () => {
+          gsap.to(h, { clipPath: "inset(-0.2em -0.1em -0.3em -0.1em)", y: 0, duration: 1.1, ease: easeOut });
+          gsap.to(path, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", delay: 0.35 });
+        },
+      });
+    });
+
+    // Scroll-Fortschritt: feine Brass-Linie am oberen Rand.
+    const bar = document.createElement("div");
+    bar.className = "scroll-progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+    gsap.to(bar, {
+      scaleX: 1,
+      ease: "none",
+      scrollTrigger: { trigger: document.documentElement, start: "top top", end: "bottom bottom", scrub: 0.3 },
+    });
+
+    ScrollTrigger.refresh();
+  }
 })();
