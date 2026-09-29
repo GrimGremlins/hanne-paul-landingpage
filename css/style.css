@@ -158,6 +158,15 @@ body::after {
 
 @media (prefers-reduced-transparency: reduce) {
   .glass { box-shadow: none; }
+  /* Glas durch soliden Hintergrund ersetzen (Baustein 34). */
+  .glass,
+  .glass--refract,
+  .prozess__card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--color-paper);
+  }
+  .glass--refract::before { display: none; }
 }
 
 /* ————————————————————— Nav ————————————————————— */
@@ -607,6 +616,7 @@ body::after {
 .prozess__card {
   position: sticky;
   top: calc(5.5rem + var(--card-index, 0) * 1.5rem);
+  z-index: calc(var(--z-base) + var(--card-index, 0)); /* explizit, unter der Nav (--z-sticky) */
   background: rgba(246, 242, 234, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -619,6 +629,14 @@ body::after {
   gap: var(--space-lg);
   align-items: start;
   transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+/* Nach der Basisregel, sonst überschreibt sie den Block oben (Baustein 34). */
+@media (prefers-reduced-transparency: reduce) {
+  .prozess__card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--color-paper);
+  }
 }
 
 .prozess__card:hover {

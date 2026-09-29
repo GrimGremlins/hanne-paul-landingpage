@@ -50,7 +50,7 @@
           trigger: el,
           start: "top 85%",
           once: true,
-          onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }),
+          onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" }),
         });
       });
     }
