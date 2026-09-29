@@ -910,19 +910,39 @@ body::after {
   pointer-events: none;
 }
 
+/* Brass-Regel unter [data-mask]-Überschriften (ersetzt die verzerrte SVG-Handlinie). */
 .hand-line {
+  position: relative;
   display: block;
-  width: min(15rem, 60%);
-  height: 0.6rem;
-  margin-top: var(--space-sm);
-  overflow: visible;
+  width: 5.5rem;
+  height: 2px;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
+  background: linear-gradient(90deg, var(--color-brass), rgba(173, 139, 87, 0.35));
+  transform-origin: 0 50%;
+}
+.hand-line::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--color-brass);
+  transform: translateY(-50%) rotate(45deg);
 }
 
-.hand-line path {
-  fill: none;
-  stroke: var(--color-brass);
-  stroke-width: 1.6;
-  stroke-linecap: round;
+/* Nav über der dunklen Mission-Fläche. */
+.nav-edge { transition: background-color var(--dur-long) var(--ease-out), color var(--dur-long) var(--ease-out), border-color var(--dur-long) var(--ease-out); }
+.nav-edge.nav-edge--dark {
+  background: rgba(20, 22, 26, 0.72);
+  border-color: rgba(246, 242, 234, 0.14);
+  color: var(--color-paper);
 }
+.nav-edge.nav-edge--dark .wordmark,
+.nav-edge.nav-edge--dark .wordmark small { color: var(--color-paper); }
+.nav-edge.nav-edge--dark .cta-outline,
+.nav-edge.nav-edge--dark .cta-outline span { color: var(--color-paper); border-color: rgba(246, 242, 234, 0.55); }
+.nav-edge.nav-edge--dark.glass--refract::before { opacity: 0.25; }
 
 [data-mask] { will-change: clip-path, transform; }

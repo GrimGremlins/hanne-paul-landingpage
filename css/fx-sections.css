@@ -1,0 +1,209 @@
+/* fx-sections.css — Sektions-Effektpaket (Auftrag B). Lädt nach style.css.
+   Alle JS-erzeugten Elemente sind aria-hidden; ohne JS / bei reduced-motion
+   passiert hier nichts Sichtbares, die Seite bleibt vollständig lesbar. */
+
+/* ————————————————————— 1) Leistungen: Kontur-Ziffern ————————————————————— */
+
+.leistungen { overflow-x: clip; }
+
+/* Ziffer sitzt in der leeren Gegenhälfte neben dem Block, nie hinter dem Text.
+   Vertikal per top (kein transform), damit der GSAP-Parallax frei bleibt. */
+.fx-numeral {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 2rem);
+  z-index: 0;
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(8rem, 15vw, 14rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+.leistung--right .fx-numeral { left: auto; right: calc(100% + 2rem); }
+
+.fx-numeral__outline,
+.fx-numeral__fill {
+  display: block;
+  white-space: nowrap;
+}
+/* Kein -webkit-text-stroke: bei Fraunces (Variable Font) zeigt er innere
+   Überlappungskonturen. Stattdessen Brass-Verlaufstext mit niedriger Deckkraft. */
+.fx-numeral__outline {
+  color: transparent;
+  background: linear-gradient(160deg, var(--color-brass) 0%, #d6c3a1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.35;
+}
+.fx-numeral__fill {
+  position: absolute;
+  inset: 0;
+  color: var(--color-forest);
+  opacity: 0.85;
+  clip-path: inset(100% 0 0 0);
+}
+
+/* Text bleibt vorn */
+.leistung--step > *:not(.fx-numeral) { position: relative; z-index: 1; }
+
+/* Ab 900px abwärts: kleine Ziffer im Fluss über dem Eyebrow, kein Überlapp */
+@media (max-width: 56.25rem) {
+  .fx-numeral,
+  .leistung--right .fx-numeral {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    display: block;
+    font-size: 6rem;
+    margin-bottom: var(--space-sm);
+  }
+  .fx-numeral__outline { opacity: 0.3; }
+  .fx-numeral__fill { opacity: 0.55; }
+}
+
+/* ————————————————————— 3) Prozess: Fortschrittslinie ————————————————————— */
+
+.js .prozess__list { position: relative; }
+
+.fx-prozess-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -0.9rem;
+  width: 2px;
+  background: var(--color-rule);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.fx-prozess-line__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-brass);
+  border-radius: inherit;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+
+.prozess__number {
+  transition: background-color 0.5s var(--ease-out), color 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+.prozess__card.is-done .prozess__number {
+  border-color: rgba(173, 139, 87, 0.65);
+}
+.prozess__card.is-active .prozess__number {
+  background: var(--color-brass);
+  border-color: var(--color-brass);
+  color: var(--color-paper);
+  box-shadow: 0 0 0 6px rgba(173, 139, 87, 0.16), 0 6px 18px rgba(173, 139, 87, 0.35);
+}
+
+/* ————————————————————— 4) FAQ: weiches Öffnen, Plus/Minus ————————————————————— */
+
+/* Ersetzt das Textzeichen "+" aus style.css durch zwei Balken: der senkrechte
+   klappt beim Öffnen weg (Plus → Minus), dazu eine halbe Drehung. */
+.faq__item summary::after {
+  content: "";
+  width: 1.1rem;
+  height: 1.1rem;
+  font-size: 0;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1.5px 100% no-repeat;
+  transition: transform 0.5s var(--ease-out), background-size 0.5s var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.faq__item[open] summary::after {
+  transform: rotate(180deg);
+  background-size: 100% 1.5px, 1.5px 0;
+  color: var(--color-forest);
+}
+/* Beim Schließen sofort zurückdrehen, obwohl [open] noch bis zum Ende der Animation bleibt */
+.faq__item.is-closing summary::after {
+  transform: rotate(0deg);
+  background-size: 100% 1.5px, 1.5px 100%;
+  color: var(--color-brass);
+}
+.faq__item summary { border-radius: 2px; }
+.faq__item summary:focus-visible { outline: 2px solid var(--color-brass); outline-offset: 2px; }
+
+/* JS übernimmt die Animation, die alte Keyframe-Animation entfällt */
+.js .faq__answer { animation: none; overflow: hidden; }
+
+/* ————————————————————— 5) CTA-Glanz + rotierender Brass-Rand ————————————————————— */
+
+.cta-solid { position: relative; overflow: hidden; isolation: isolate; }
+.cta-solid::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 55%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.34) 50%, transparent 100%);
+  transform: translateX(-130%) skewX(-18deg);
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cta-solid:hover::after,
+  .cta-solid:focus-visible::after {
+    transform: translateX(260%) skewX(-18deg);
+    transition: transform 0.9s var(--ease-out);
+  }
+}
+
+@property --hp-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.kontakt__card { position: relative; }
+.kontakt__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--hp-angle), transparent 0 55%, var(--color-brass) 78%, transparent 92%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .kontakt__card::after { animation: hp-spin 9s linear infinite; }
+}
+@keyframes hp-spin { to { --hp-angle: 360deg; } }
+
+/* ————————————————————— 6) Footer: Riesen-Wortmarke ————————————————————— */
+
+.fx-wordmark {
+  width: 100vw;
+  margin: var(--space-2xl) calc(50% - 50vw) 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+  clip-path: inset(100% 0 0 0);
+}
+.fx-wordmark span {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: 18vw;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: var(--color-forest);
+  padding-bottom: 0.06em;
+}
+
+/* Count-up ohne Breitensprung (Review grim-37). */
+.proof__number { font-variant-numeric: tabular-nums; }

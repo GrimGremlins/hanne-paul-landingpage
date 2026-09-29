@@ -1,0 +1,339 @@
+/* fx-hero.css · Hero-Effektpaket (Intro-Vorhang, Marquee, Kreis-Badge, Spotlight)
+ * Alle Elemente werden von js/fx-hero.js erzeugt. Ohne JS ist nichts davon vorhanden.
+ * Nur Tokens aus tokens.css. Animiert werden ausschließlich transform, opacity, clip-path.
+ */
+
+/* ————————————————————— 1 · Intro-Vorhang ————————————————————— */
+
+/* Scrollbar-Platz reservieren, damit das Umschalten von overflow (Intro) keinen Layout-Sprung auslöst. */
+html { scrollbar-gutter: stable; }
+html.has-intro { overflow: hidden; }
+
+.fx-intro {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  background: var(--color-forest);
+  clip-path: inset(0 0 0 0);
+}
+
+.fx-intro__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding-inline: var(--page-gutter);
+}
+
+.fx-intro__mark {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 1.4rem + 4vw, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: var(--color-paper);
+  opacity: 0;
+  text-align: center;
+}
+
+.fx-intro__rule {
+  width: min(11rem, 40vw);
+  height: 1px;
+  background: var(--color-brass);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Optional: Ein kleines Inline-Skript im <head> (setzt html.hp-intro-pending, wenn das
+ * Intro laufen wird) deckt die Zeit bis zur Ausführung von fx-hero.js ab. Ohne dieses
+ * Skript passiert hier nichts. Das JS entfernt die Klasse, sobald das echte Overlay steht.
+ * Sicherheitsnetz: Erscheint das Overlay nie, blendet sich die Abdeckung nach 3 s aus. */
+html.hp-intro-pending::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: var(--color-forest);
+  animation: fx-pending-release 0.01s linear 3s forwards;
+}
+
+@keyframes fx-pending-release {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* ————————————————————— 2 · Marquee-Band ————————————————————— */
+
+.fx-marquee {
+  position: relative;
+  overflow: hidden;
+  border-block: var(--rule-hairline) solid var(--color-rule);
+  padding-block: clamp(1rem, 0.6rem + 1.8vw, 1.75rem);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+
+.fx-marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.fx-marquee__group {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.fx-marquee__word {
+  flex: none;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.5rem, 1.4rem + 4.6vw, 5rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--color-forest);
+}
+
+.fx-marquee__word.is-outline {
+  background: linear-gradient(100deg, #AD8B57, #c9ab7a 45%, #8a6d40);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.fx-marquee__star {
+  flex: none;
+  padding-inline: clamp(1.25rem, 0.6rem + 3vw, 2.75rem);
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: clamp(1.1rem, 0.8rem + 1.4vw, 1.75rem);
+  line-height: 1;
+  color: var(--color-brass);
+}
+
+/* Statisch (reduced-motion oder kein GSAP): kein Lauf, Wörter umbrechen mittig. */
+.fx-marquee.is-static {
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+
+.fx-marquee.is-static .fx-marquee__track {
+  width: auto;
+  justify-content: center;
+  will-change: auto;
+  transform: none !important;
+}
+
+.fx-marquee.is-static .fx-marquee__group {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: var(--space-xs);
+}
+
+/* ————————————————————— 3 · Rotierendes Kreis-Badge ————————————————————— */
+
+.fx-badge {
+  position: absolute;
+  right: var(--page-gutter);
+  bottom: var(--space-xl);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 8.75rem;
+  height: 8.75rem;
+  border-radius: 50%;
+  color: var(--color-forest);
+  text-decoration: none;
+  transition: transform var(--dur-long) var(--ease-out);
+}
+
+.fx-badge:hover,
+.fx-badge:focus-visible {
+  transform: scale(1.06);
+}
+
+.fx-badge:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.fx-badge__ring,
+.fx-badge__arrow {
+  grid-area: 1 / 1;
+}
+
+.fx-badge__ring {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: fx-badge-spin 28s linear infinite;
+}
+
+.fx-badge__disc {
+  fill: rgba(246, 242, 234, 0.88);
+  fill: color-mix(in srgb, var(--color-paper) 88%, transparent);
+  stroke: var(--color-rule);
+  stroke-width: 1;
+}
+
+.fx-badge__text {
+  fill: var(--color-forest);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10.5px;
+  text-transform: uppercase;
+}
+
+.fx-badge__arrow {
+  width: 2.1rem;
+  height: 2.1rem;
+  fill: none;
+  stroke: var(--color-brass);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--dur-long) var(--ease-out);
+}
+
+.fx-badge:hover .fx-badge__arrow,
+.fx-badge:focus-visible .fx-badge__arrow {
+  transform: translateX(3px);
+}
+
+@keyframes fx-badge-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Erst ab 1000 px: darunter läge das Badge über Lede/CTA. */
+@media (max-width: 999px) {
+  .fx-badge { display: none; }
+}
+
+/* ————————————————————— 4 · Hero-Spotlight ————————————————————— */
+
+.fx-spot {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* über der Aurora (0), unter dem Inhalt (2) */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fx-spot__glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38rem;
+  height: 38rem;
+  margin: -19rem 0 0 -19rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(173, 139, 87, 0.24) 0,
+    rgba(173, 139, 87, 0.1) 36%,
+    rgba(173, 139, 87, 0) 68%
+  );
+  transform: translate3d(var(--fx-x, 0px), var(--fx-y, 0px), 0);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out);
+  will-change: transform, opacity;
+}
+
+.fx-spot.is-on .fx-spot__glow { opacity: 1; }
+
+/* ————————————————————— 5 · Mobiler Sticky-CTA ————————————————————— */
+
+.fx-sticky-cta { display: none; }
+
+@media (max-width: 600px) {
+  .fx-sticky-cta {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+    z-index: var(--z-sticky);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.85rem 1.35rem;
+    border-radius: 999px;
+    border: var(--rule-hairline) solid rgba(246, 242, 234, 0.16);
+    border: var(--rule-hairline) solid color-mix(in srgb, var(--color-paper) 16%, transparent);
+    background: var(--color-forest);
+    background: color-mix(in srgb, var(--color-forest) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+            backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: 0 10px 30px rgba(31, 35, 32, 0.22);
+    color: var(--color-paper);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    /* Versteckt: außerhalb des Sichtfelds, nicht klickbar, nicht im Tab-Fluss. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(-50%, 140%, 0) scale(var(--fx-cta-scale, 1));
+    transition:
+      transform var(--dur-long) var(--ease-out),
+      opacity var(--dur-short) var(--ease-out),
+      visibility 0s linear var(--dur-long);
+  }
+
+  .fx-sticky-cta.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(-50%, 0, 0) scale(var(--fx-cta-scale, 1));
+    transition:
+      transform var(--dur-long) var(--ease-out),
+      opacity var(--dur-short) var(--ease-out),
+      visibility 0s linear 0s;
+  }
+
+  .fx-sticky-cta.is-compact { --fx-cta-scale: 0.92; }
+
+  .fx-sticky-cta:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .fx-sticky-cta__arrow {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: var(--color-brass);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+@media (max-width: 600px) and (prefers-reduced-transparency: reduce) {
+  .fx-sticky-cta {
+    background: var(--color-forest);
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+  }
+}
+
+/* ————————————————————— Reduced Motion ————————————————————— */
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-sticky-cta,
+  .fx-sticky-cta.is-visible { transition: none; }
+  .fx-intro,
+  html.hp-intro-pending::after { display: none; }
+  html.has-intro { overflow: auto; }
+  .fx-badge__ring { animation: none; }
+  .fx-badge,
+  .fx-badge__arrow { transition: none; }
+  .fx-spot { display: none; }
+  .fx-marquee__track { transform: none !important; }
+}

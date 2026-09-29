@@ -154,7 +154,9 @@
       if (reduceMotion || !window.gsap) {
         headline.classList.add("is-inview");
       } else {
-        gsap.fromTo(
+        // Läuft das Intro (fx-hero.js), startet die Headline erst, wenn der Vorhang hochgeht.
+        const intro = document.documentElement.classList.contains("hp-intro-pending") && !window.__hpIntroDone;
+        const tween = gsap.fromTo(
           inners,
           { opacity: 0, y: "115%" },
           {
@@ -164,9 +166,15 @@
             stagger: 0.14,
             ease: "power3.out",
             delay: 0.12,
+            paused: intro,
             onComplete: () => headline.classList.add("is-inview"),
           }
         );
+        if (intro) {
+          const go = () => tween.play();
+          window.addEventListener("hp:intro-done", go, { once: true });
+          setTimeout(go, 4000); // Failsafe
+        }
       }
     });
   }
@@ -235,31 +243,38 @@
       }
     }
 
-    // Text-Mask-Reveal + handgezeichnete Linie unter ausgewählten Überschriften.
+    // Text-Mask-Reveal + Brass-Regel unter ausgewählten Überschriften.
+    // Opus-Runde: die frühere SVG-„Handlinie“ (preserveAspectRatio=none) wurde
+    // verzerrt gestrichen und wirkte wellig — ersetzt durch eine exakte 2-px-Regel
+    // mit Endpunkt, die per scaleX von links einzeichnet.
     document.querySelectorAll("[data-mask]").forEach((h) => {
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("class", "hand-line");
-      svg.setAttribute("viewBox", "0 0 260 10");
-      svg.setAttribute("preserveAspectRatio", "none");
-      svg.setAttribute("aria-hidden", "true");
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", "M2 6 C 38 1, 82 9, 130 4.5 S 214 8, 258 3");
-      path.setAttribute("pathLength", "1");
-      path.style.strokeDasharray = "1";
-      path.style.strokeDashoffset = "1";
-      svg.appendChild(path);
-      h.insertAdjacentElement("afterend", svg);
+      const rule = document.createElement("span");
+      rule.className = "hand-line";
+      rule.setAttribute("aria-hidden", "true");
+      h.insertAdjacentElement("afterend", rule);
 
       gsap.set(h, { clipPath: "inset(0 0 100% 0)", y: 28 });
+      gsap.set(rule, { scaleX: 0 });
       ScrollTrigger.create({
         trigger: h,
         start: "top 88%",
         once: true,
         onEnter: () => {
           gsap.to(h, { clipPath: "inset(-0.2em -0.1em -0.3em -0.1em)", y: 0, duration: 1.1, ease: easeOut });
-          gsap.to(path, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", delay: 0.35 });
+          gsap.to(rule, { scaleX: 1, duration: 1.2, ease: "expo.inOut", delay: 0.35 });
         },
+      });
+    });
+
+    // Nav über dunklen Flächen (Mission): dunkle Glasvariante statt grauem Schleier.
+    const navEl = document.querySelector(".nav-edge");
+    document.querySelectorAll(".mission").forEach((dark) => {
+      if (!navEl) return;
+      ScrollTrigger.create({
+        trigger: dark,
+        start: "top 60px",
+        end: "bottom 60px",
+        toggleClass: { targets: navEl, className: "nav-edge--dark" },
       });
     });
 

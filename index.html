@@ -2,12 +2,15 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<script>document.documentElement.classList.add('js');</script>
+<script>document.documentElement.classList.add('js');
+(function(){try{if(!location.hash&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!sessionStorage.getItem('hp-intro-seen'))document.documentElement.classList.add('hp-intro-pending');}catch(e){}})();</script>
 <noscript><style>.reveal, .reveal-split { opacity: 1 !important; transform: none !important; } .reveal-split .split-inner { transform: none !important; opacity: 1 !important; }</style></noscript>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Unternehmensberatung Hanne Paul — Gewerbe- &amp; Handelsimmobilien</title>
 <meta name="description" content="Unternehmensberatung Hanne Paul begleitet Unternehmen und Eigentümer bei Beratung, Vermittlung und Projektentwicklung von Gewerbe- und Handelsimmobilien. In der Brauturm Galerie, Illingen.">
 <link rel="canonical" href="https://www.hanne-paul.de/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%232E362B'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%23F6F2EA'%3EHP%3C/text%3E%3Crect x='20' y='49' width='24' height='2' fill='%23AD8B57'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#2E362B">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Unternehmensberatung Hanne Paul">
@@ -24,6 +27,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,560;0,9..144,600;1,9..144,500&display=swap">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/fx-hero.css">
+<link rel="stylesheet" href="css/fx-sections.css">
 
 <!-- GEO: structured data — kept byte-for-byte consistent with the visible NAP (Impressum) and FAQ below -->
 <script type="application/ld+json">
@@ -141,6 +146,8 @@
     </div>
   </section>
 
+  <!-- DRAFT — Kennzahlen („20+ Jahre“, „50+“, „Saarland & Südwesten“) sind NICHT
+       von Hanne Paul bestätigt. Vor echtem Go-Live mit echten Angaben ersetzen. -->
   <section class="proof reveal" aria-labelledby="proof-titel">
     <h2 id="proof-titel" class="visually-hidden">Erfahrung in Zahlen</h2>
     <dl class="proof__list">
@@ -299,5 +306,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="js/main.js"></script>
+<script src="js/fx-hero.js"></script>
+<script src="js/fx-sections.js"></script>
 </body>
 </html>
